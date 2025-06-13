@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Te Amo Nina - Estilo Matrix</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      touch-action: none;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #centerText {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4em;
+      color: fuchsia;
+      font-family: 'Dancing Script', cursive;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+      text-shadow: 0 0 10px fuchsia, 0 0 20px fuchsia;
+    }
+  </style>
+</head>
+<body>
+  <div id="centerText">Te amo Nina</div>
+  <canvas id="matrixCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let font_size = 16;
+    let columns = canvas.width / font_size;
+    let drops = new Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "fuchsia";
+      ctx.font = font_size + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        let text = "Te amo Nina";
+        ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+        if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+
+        drops[i]++;
+      }
+
+      requestAnimationFrame(drawMatrix);
+    }
+
+    drawMatrix();
+
+    function spawnLove(x, y) {
+      for (let i = 0; i < 30; i++) {
+        const span = document.createElement("span");
+        span.innerText = "Te amo Nina";
+        span.style.position = "absolute";
+        span.style.left = x + "px";
+        span.style.top = y + "px";
+        span.style.color = "fuchsia";
+        span.style.fontSize = "12px";
+        span.style.fontFamily = "monospace";
+        span.style.pointerEvents = "none";
+        span.style.userSelect = "none";
+        document.body.appendChild(span);
+
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = Math.random() * 150 + 50;
+
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+
+        span.animate([
+          { transform: "translate(0, 0)", opacity: 1 },
+          { transform: `translate(${dx}px, ${dy}px)`, opacity: 0 }
+        ], {
+          duration: 1500,
+          easing: "ease-out",
+          fill: "forwards"
+        });
+
+        setTimeout(() => span.remove(), 1500);
+      }
+    }
+
+    document.addEventListener("click", e => spawnLove(e.clientX, e.clientY));
+    document.addEventListener("touchstart", e => {
+      if (e.touches.length > 0) {
+        spawnLove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
